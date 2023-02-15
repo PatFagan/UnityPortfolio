@@ -19,6 +19,8 @@ public class Grass : MonoBehaviour
 
     public float timeBetweenVertices;
 
+    private float scalar = 1f;
+
     //TranslateMovement movementScript;
 
     void Start()
@@ -43,6 +45,21 @@ public class Grass : MonoBehaviour
         StartCoroutine(MoveGrass(grassMov));
     }
 
+    void OnTriggerEnter(Collider collided)
+    {
+        if (collided.gameObject.tag == "Player")
+        {
+            scalar *= 3f;
+        }
+    }
+    void OnTriggerExit(Collider collided)
+    {
+        if (collided.gameObject.tag == "Player")
+        {
+            scalar /= 3f;
+        }
+    }
+
     IEnumerator MoveGrass(Vector3 grassMov)
     {   
         float randMove = Random.Range(1, 1.05f);
@@ -50,34 +67,36 @@ public class Grass : MonoBehaviour
         for (int i = 4; i < gelatinVertices.Length; i++) // loop through all vertices in the mesh
         {
             Vector3 target = transform.TransformPoint(vertexArray[i]);
-            target += grassMov * (randMove); // get current vertex pos in world space
+            target += grassMov * (randMove) * scalar; // get current vertex pos in world space
             gelatinVertices[i].Jiggle(target, stiffness, damping); // jiggle the current vertex
             target = transform.InverseTransformPoint(gelatinVertices[i].position); // get pos of new vertex
             // set new vertex positions to the array
             vertexArray[gelatinVertices[i].ID] = Vector3.Lerp(vertexArray[gelatinVertices[i].ID], target, intensity);
             
+            MeshClone.vertices = vertexArray; // set the clone mesh equal to the edited array of vertices
+
             float randTime = Random.Range(0, .05f);
             yield return new WaitForSeconds(timeBetweenVertices + randTime);
             
-            MeshClone.vertices = vertexArray;
         }
         for (int i = 4; i < gelatinVertices.Length; i++) // loop through all vertices in the mesh
         {
             Vector3 target = transform.TransformPoint(vertexArray[i]);
-            target -= grassMov * (randMove); // get current vertex pos in world space
+            target -= grassMov * (randMove) * scalar; // get current vertex pos in world space
             gelatinVertices[i].Jiggle(target, stiffness, damping); // jiggle the current vertex
             target = transform.InverseTransformPoint(gelatinVertices[i].position); // get pos of new vertex
             // set new vertex positions to the array
             vertexArray[gelatinVertices[i].ID] = Vector3.Lerp(vertexArray[gelatinVertices[i].ID], target, intensity);
             
+            MeshClone.vertices = vertexArray; // set the clone mesh equal to the edited array of vertices
+
             float randTime = Random.Range(0, .05f);
             yield return new WaitForSeconds(timeBetweenVertices + randTime);
 
-            MeshClone.vertices = vertexArray;
         }
-        //MeshClone.vertices = vertexArray; // set the clone mesh equal to the edited array of vertices
 
-        //yield return new WaitForSeconds(.5f);
+        // stop moving while player stands on grass
+        yield return new WaitUntil(() => scalar == 1);
         
         StartCoroutine(MoveGrass(grassMov));
     }
