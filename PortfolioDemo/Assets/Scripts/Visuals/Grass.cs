@@ -64,7 +64,7 @@ public class Grass : MonoBehaviour
     {   
         float randMove = Random.Range(1, 1.05f);
         vertexArray = OriginalMesh.vertices; // set the vertex array to the original mesh, to be edited
-        for (int i = 4; i < gelatinVertices.Length; i++) // loop through all vertices in the mesh
+        for (int i = gelatinVertices.Length - 1; i > 1; i--) // loop through all vertices in the mesh
         {
             Vector3 target = transform.TransformPoint(vertexArray[i]);
             target += grassMov * (randMove) * scalar; // get current vertex pos in world space
@@ -79,7 +79,7 @@ public class Grass : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenVertices + randTime);
             
         }
-        for (int i = 4; i < gelatinVertices.Length; i++) // loop through all vertices in the mesh
+        for (int i = 0; i < gelatinVertices.Length; i++) // loop through all vertices in the mesh
         {
             Vector3 target = transform.TransformPoint(vertexArray[i]);
             target -= grassMov * (randMove) * scalar; // get current vertex pos in world space

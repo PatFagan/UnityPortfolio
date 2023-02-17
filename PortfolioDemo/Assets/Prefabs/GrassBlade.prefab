@@ -383,10 +383,10 @@ MonoBehaviour:
   stiffness: 1
   damping: 0.75
   intensity: 1
-  xOffset: 0
+  xOffset: 0.07
   yOffset: 0
-  zOffset: 0.1
-  timeBetweenVertices: 0.02
+  zOffset: 0
+  timeBetweenVertices: 0.005
 --- !u!1 &6644934754011532784
 GameObject:
   m_ObjectHideFlags: 0
@@ -603,7 +603,7 @@ MonoBehaviour:
   stiffness: 1
   damping: 0.75
   intensity: 1
-  xOffset: 0
+  xOffset: 0.07
   yOffset: 0
-  zOffset: 0.1
-  timeBetweenVertices: 0.02
+  zOffset: 0
+  timeBetweenVertices: 0.005
