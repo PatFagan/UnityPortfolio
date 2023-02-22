@@ -50,9 +50,14 @@ Material:
     m_Floats:
     - _HeightScalar: 100
     - _NoiseScalar: 0.01
-    - _PanningSpeed: 40
+    - _PanningSpeed: 20
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
+    - _Color1: {r: 0.7773585, g: 0.8151306, b: 1, a: 0}
+    - _Color2: {r: 0.7018868, g: 0.81203103, b: 1, a: 0}
+    - _FirstNoiseRotation: {r: 1, g: 0, b: 0, a: 90}
+    - _NoiseRemapping: {r: 2.16, g: 0.9, b: 1.5, a: 0.44}
     - _RotationProjection: {r: 1, g: 0, b: 0, a: 90}
+    - _SecondNoiseRotation: {r: 1, g: 0, b: 0, a: 90}
   m_BuildTextureStacks: []
