@@ -19,12 +19,11 @@ public class Grass : MonoBehaviour
 
     public float timeBetweenVertices;
 
-    private float scalar = 1f;
-
-    //TranslateMovement movementScript;
+    float localTimingOffset;
 
     void Start()
     {
+        localTimingOffset = gameObject.transform.parent.GetComponent<Timing>().timingOffset;
         //movementScript = GetComponent<TranslateMovement>(); // get movement script
 
         // get two meshes (one to edit, then one to set to the edited version)
@@ -44,30 +43,16 @@ public class Grass : MonoBehaviour
         Vector3 grassMov = new Vector3(xOffset, yOffset, zOffset);
         StartCoroutine(MoveGrass(grassMov));
     }
-
-    void OnTriggerEnter(Collider collided)
-    {
-        if (collided.gameObject.tag == "Player")
-        {
-            scalar *= 3f;
-        }
-    }
-    void OnTriggerExit(Collider collided)
-    {
-        if (collided.gameObject.tag == "Player")
-        {
-            scalar /= 3f;
-        }
-    }
-
     IEnumerator MoveGrass(Vector3 grassMov)
     {   
-        float randMove = Random.Range(1, 1.05f);
         vertexArray = OriginalMesh.vertices; // set the vertex array to the original mesh, to be edited
-        for (int i = gelatinVertices.Length - 1; i > 1; i--) // loop through all vertices in the mesh
+        
+        yield return new WaitForSeconds(localTimingOffset);
+
+        for (int i = gelatinVertices.Length - 1; i >= 0; i--) // loop through all vertices in the mesh
         {
             Vector3 target = transform.TransformPoint(vertexArray[i]);
-            target += grassMov * (randMove) * scalar; // get current vertex pos in world space
+            target += grassMov; // get current vertex pos in world space
             gelatinVertices[i].Jiggle(target, stiffness, damping); // jiggle the current vertex
             target = transform.InverseTransformPoint(gelatinVertices[i].position); // get pos of new vertex
             // set new vertex positions to the array
@@ -75,14 +60,13 @@ public class Grass : MonoBehaviour
             
             MeshClone.vertices = vertexArray; // set the clone mesh equal to the edited array of vertices
 
-            float randTime = Random.Range(0, .05f);
-            yield return new WaitForSeconds(timeBetweenVertices + randTime);
+            yield return new WaitForSeconds(timeBetweenVertices);
             
         }
         for (int i = 0; i < gelatinVertices.Length; i++) // loop through all vertices in the mesh
         {
             Vector3 target = transform.TransformPoint(vertexArray[i]);
-            target -= grassMov * (randMove) * scalar; // get current vertex pos in world space
+            target -= 2*grassMov; // get current vertex pos in world space
             gelatinVertices[i].Jiggle(target, stiffness, damping); // jiggle the current vertex
             target = transform.InverseTransformPoint(gelatinVertices[i].position); // get pos of new vertex
             // set new vertex positions to the array
@@ -90,13 +74,23 @@ public class Grass : MonoBehaviour
             
             MeshClone.vertices = vertexArray; // set the clone mesh equal to the edited array of vertices
 
-            float randTime = Random.Range(0, .05f);
-            yield return new WaitForSeconds(timeBetweenVertices + randTime);
-
+            yield return new WaitForSeconds(timeBetweenVertices);
+            
         }
+        for (int i = gelatinVertices.Length - 1; i >= 0; i--) // loop through all vertices in the mesh
+        {
+            Vector3 target = transform.TransformPoint(vertexArray[i]);
+            target += grassMov; // get current vertex pos in world space
+            gelatinVertices[i].Jiggle(target, stiffness, damping); // jiggle the current vertex
+            target = transform.InverseTransformPoint(gelatinVertices[i].position); // get pos of new vertex
+            // set new vertex positions to the array
+            vertexArray[gelatinVertices[i].ID] = Vector3.Lerp(vertexArray[gelatinVertices[i].ID], target, intensity);
+            
+            MeshClone.vertices = vertexArray; // set the clone mesh equal to the edited array of vertices
 
-        // stop moving while player stands on grass
-        yield return new WaitUntil(() => scalar == 1);
+            yield return new WaitForSeconds(timeBetweenVertices);
+            
+        }
         
         StartCoroutine(MoveGrass(grassMov));
     }
